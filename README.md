@@ -71,7 +71,3 @@ Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları takip ed
     *(**Not:** Ana dosyanızın adı `app.py` değilse, lütfen bu kısmı `python <ana_dosya_adınız>.py` şeklinde değiştirin.)*
 
 ---
-
-    git push
-    ```
-Bu, projenizi GitHub'da sergilemek için en doğru ve sade yöntemdir.
