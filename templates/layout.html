@@ -85,25 +85,26 @@
 
         /* Logo Stili (İkonlu Metin) */
         .logo {
-            font-size: 1.8em;
-            font-weight: 900;
             color: var(--primary-violet);
-            text-shadow: 0 0 5px var(--accent-glow);
-            letter-spacing: 1px;
+            font-size: 1.5em;
+            font-weight: 700;
+
             transition: transform 0.3s;
             display: flex;
             align-items: center;
         }
 
-        .logo-icon {
-            font-size: 1.2em;
-            color: var(--secondary-fuchsia); /* İkon rengi Pembe */
-            margin-right: 8px;
-            transform: rotate(-10deg);
+        .logo-image {
+            width: 38px; 
+            height: auto;
+            margin-right: 8px; 
         }
-
         .logo:hover {
             transform: scale(1.05);
+        }
+
+        .logo-text {
+            color:var(--text-light);
         }
 
         header nav ul {
@@ -344,7 +345,10 @@
     <header>
         <div class="container">
             <a href="{{ url_for('index') }}" class="logo">
-                <span class="logo-icon">✨</span> StudyFlow
+                <img src="{{ url_for('static', filename='images/studyflow_logo.png.png') }}" 
+                    alt="StudyFlow Logo" 
+                    class="logo-image">
+                <span class="logo-text">StudyFlow</span>
             </a>
             <nav>
                 <ul>
