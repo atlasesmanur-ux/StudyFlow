@@ -36,7 +36,7 @@ Uygulamanın ana fonksiyonlarından birini gösteren üçüncü ekran.
 
 ---
 
-## 🛠️ Kurulum ve Çalıştırma
+##  Kurulum ve Çalıştırma
 
 Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları takip edin:
 
