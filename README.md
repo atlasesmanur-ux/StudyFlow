@@ -1,10 +1,10 @@
-# 🐍 StudyFlow: Basit Eğitim Takip Uygulaması
+#  StudyFlow: Basit Eğitim Takip Uygulaması
 
 > **Python** ile geliştirilmiş, öğrenci veya eğitmenlerin ders takibini kolaylaştıran, sade ve işlevsel bir uygulamadır.
 
 ---
 
-## 🖥️ Proje Görünümleri
+##  Proje Görünümleri
 
 StudyFlow uygulamasının temel ekranları aşağıdadır:
 
@@ -28,7 +28,7 @@ Uygulamanın ana fonksiyonlarından birini gösteren üçüncü ekran.
 
 ---
 
-## ✨ Temel Özellikler
+##  Temel Özellikler
 
 * **Takip:** Ders saatleri ve önemli tarihlerin takibi.
 * **Organizasyon:** Ödevleri ve notları düzenleme.
