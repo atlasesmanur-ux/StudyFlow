@@ -24,7 +24,7 @@ Giriş yapıldıktan sonra kullanıcıyı karşılayan ve genel durumu gösteren
 
 Uygulamanın ana fonksiyonlarından birini gösteren üçüncü ekran.
 
-![Uygulamanın bir özelliğini gösteren detay ekranı](images/x.png)
+![Uygulamanın bir özelliğini gösteren detay ekranı](images/plan_week.png)
 
 ---
 
