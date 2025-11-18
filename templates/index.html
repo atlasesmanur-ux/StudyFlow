@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}Ana Sayfa - StudyFlow{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">StudyFlow'a Hoş Geldiniz!</h1>
+
+    <div class="card" style="text-align: center; max-width: 700px; margin: 0 auto 40px; padding: 40px;">
+        <p style="font-size: 1.2em; color: var(--text-medium); margin-bottom: 25px;">
+            Ders çalışma seanslarını kaydet, haftalık hedefler belirle ve ilerlemeni takip et.
+            Daha verimli çalışmak için kişisel asistanın StudyFlow burada!
+        </p>
+        
+        {% if not session.get('user_id') %}
+            <a href="{{ url_for('register') }}" class="btn btn-primary" style="margin-right: 15px;">Hemen Katıl</a>
+            <a href="{{ url_for('login') }}" class="btn btn-outline">Giriş Yap</a>
+        {% else %}
+            <p style="font-size: 1.1em; color: var(--text-light); margin-top: 30px;">
+                Merhaba, <span class="username" style="color: var(--accent-fuchsia);">{{ session['username'] }}</span>!
+                <br>Panelini görmek için <a href="{{ url_for('dashboard') }}">buraya tıkla</a> veya
+                <a href="{{ url_for('add_session') }}">yeni bir seans ekle</a>.
+            </p>
+        {% endif %}
+    </div>
+
+    <!-- YENİ MOTİVASYONEL GÖRSEL ALANI -->
+    <div class="motivation-image-container">
+        <!-- Minimalist, ders çalışmaya odaklanmış bir illüstrasyon kullanacağız -->
+        
+        <p style="margin-top: 20px; font-size: 1.1em; color: var(--text-medium);">
+            "Dün öğrendin. Bugün uyguluyorsun. Yarın yöneteceksin."
+        </p>
+    </div>
+
+{% endblock %}

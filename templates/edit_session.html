@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}Seans Düzenle{% endblock %}
+
+{% block content %}
+    <h1 style="text-align: center;">Çalışma Seansını Düzenle</h1>
+    <p style="text-align: center; color: var(--text-muted);">ID: {{ study_session.id }}</p>
+
+    <div class="card data-form">
+        <form method="POST">
+            <div class="form-grid">
+                
+                <div class="form-group-full">
+                    <label for="task_name">Ne Üzerinde Çalıştın?</label>
+                    <input type="text" id="task_name" name="task_name" value="{{ study_session.task_name }}" required>
+                </div>
+                
+                <div>
+                    <label for="start_time">Başlangıç Zamanı</label>
+                    <input type="datetime-local" id="start_time" name="start_time" value="{{ study_session.start_time_formatted }}" required>
+                </div>
+                
+                <div>
+                    <label for="end_time">Bitiş Zamanı</label>
+                    <input type="datetime-local" id="end_time" name="end_time" value="{{ study_session.end_time_formatted }}" required>
+                </div>
+                
+                <div class="form-group-full">
+                    <label for="notes">Notlar (İsteğe Bağlı)</label>
+                    <textarea id="notes" name="notes" rows="4">{{ study_session.notes }}</textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Seansı Güncelle</button>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-outline">Vazgeç / Panele Dön</a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+{% endblock %}

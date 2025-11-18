@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}Giriş Yap - StudyFlow{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Giriş Yap</h1>
+    
+    <div class="auth-form card">
+        <h2>Hesabına Giriş Yap</h2>
+        <form method="POST" action="{{ url_for('login') }}">
+            <label for="username">Kullanıcı Adı:</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password">Parola:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Giriş Yap</button>
+            </div>
+            <p style="text-align: center; margin-top: 20px; font-size: 0.9em; color: var(--text-light);">
+                Hesabın yok mu? <a href="{{ url_for('register') }}">Kayıt Ol</a>
+            </p>
+        </form>
+    </div>
+{% endblock %}

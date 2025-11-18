@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}Haftalık Planlama - StudyFlow{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Gelecek Hafta Planın</h1>
+    
+    <div class="alert card" style="background-color: #e6f7ff; color: #004d99; border-color: #b3e0ff;">
+        <p style="font-size: 1.1em;">Aşağıdaki plan **{{ next_monday.strftime('%d %B %Y (Pazartesi)') }}** tarihinde başlayacak hafta için kaydedilecektir.</p>
+        <p style="font-size: 0.95em; color: #0060c0;">Ana hedeflerini, odaklanman gereken konuları veya kaç saat çalışmayı planladığını buraya not et.</p>
+    </div>
+
+    <div class="data-form card">
+        <h2>Haftalık Hedeflerini Belirle</h2>
+        <form method="POST" action="{{ url_for('plan_week') }}">
+            
+            <label for="goals">Haftalık Hedeflerin/Planın:</label>
+            <textarea id="goals" name="goals" rows="8" required placeholder="Örn: Bu hafta Fizik konularını bitirip, 15 saat toplam çalışma süresine ulaşacağım."></textarea>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Planı Kaydet</button>
+            </div>
+        </form>
+    </div>
+    
+{% endblock %}

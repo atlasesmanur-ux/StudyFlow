@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block title %}Çalışma Paneli - StudyFlow{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Çalışma Paneli</h1>
+    
+    <div class="dashboard-grid">
+        <div class="summary-card card">
+            <h2>Bu Hafta ({{ week_start_date.strftime('%d %B') }})</h2>
+            <p class="stat-main">{{ weekly_total_hours }}<span class="stat-sub">saat</span> {{ weekly_remaining_minutes }}<span class="stat-sub">dk</span></p>
+            <p class="stat-sub">Toplam Çalışma Süren</p>
+        </div>
+        
+        <div class="plan-status-card card">
+            {% if current_plan %}
+                <h3>{{ current_plan.week_start_date.strftime('%d %B') }} Haftası Planı</h3>
+                <p style="font-size: 0.95em; color: var(--text-muted);">{{ current_plan.goals | truncate(150) }}</p>
+                <div class="form-actions" style="margin-top: 20px;">
+                    <a href="{{ url_for('plan_week') }}" class="btn btn-outline">Planı Düzenle</a>
+                </div>
+            {% else %}
+                <h3>Planlanmamış Hafta!</h3>
+                <p style="font-size: 0.95em; color: var(--text-muted);">
+                    Gelecek hafta ({{ next_monday.strftime('%d %B') }} Pazartesi) için henüz bir hedefin yok.
+                </p>
+                <div class="form-actions" style="margin-top: 20px;">
+                    <a href="{{ url_for('plan_week') }}" class="btn btn-primary" style="background-color: var(--secondary-fuchsia); color: var(--background-dark);">Yeni Plan Oluştur</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <h2 class="page-title" style="font-size: 2em; margin-top: 60px;">Tüm Kayıtlı Seansların</h2>
+    
+    {% if sessions %}
+        <div class="session-list">
+            {% for session in sessions %} 
+                <div class="session-card card">
+                    <h2>{{ session.task_name }}</h2>
+                    <p><strong>Süre:</strong> {{ session.duration_minutes }} dakika</p>
+                    <p><strong>Başlangıç:</strong> {{ session.start_time.strftime('%Y-%m-%d %H:%M') if session.start_time else '(Tarih Eksik)' }}</p>
+                    <p><strong>Bitiş:</strong> {{ session.end_time.strftime('%Y-%m-%d %H:%M') if session.end_time else '(Tarih Eksik)' }}</p>
+                    
+                    {% if session.notes %}
+                        <p class="notes"><strong>Notlar:</strong> {{ session.notes }}</p>
+                    {% endif %}
+                    
+                    <div class="session-actions" style="margin-top: 20px; text-align: right;">
+                        
+                        <a href="{{ url_for('edit_session', session_id=session.id) }}" class="btn btn-outline" style="margin-right: 10px;">
+                            Düzenle
+                        </a>
+                        
+                        <form method="POST" action="{{ url_for('delete_session', session_id=session.id) }}" style="display: inline;">
+                            <button type="submit" class="btn btn-primary" onclick="return confirm('Bu seansı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!');">
+                                Sil
+                            </button>
+                        </form>
+                    </div>
+                    </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info card">
+            <p style="font-size: 1.1em;">Henüz hiç çalışma seansı kaydetmemişsin. Hemen <a href="{{ url_for('add_session') }}">bir seans ekle</a>!</p>
+            <img src="https://via.placeholder.com/100x100?text=✨" alt="Motivasyon İkonu" style="margin-top: 15px; border-radius: 8px;">
+        </div>
+    {% endif %}
+
+{% endblock %}

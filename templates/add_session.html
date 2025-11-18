@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block title %}Seans Ekle - StudyFlow{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Yeni Çalışma Seansı Kaydet</h1>
+    
+    <div class="data-form card">
+        <form method="POST" action="{{ url_for('add_session') }}">
+            <label for="task_name">Çalışılan Konu/Görev:</label>
+            <input type="text" id="task_name" name="task_name" required placeholder="Örn: Flask Uygulama Geliştirme, Matematik Problemleri">
+            
+            <label for="start_time">Başlangıç Zamanı:</label>
+            <input type="datetime-local" id="start_time" name="start_time" required>
+            
+            <label for="end_time">Bitiş Zamanı:</label>
+            <input type="datetime-local" id="end_time" name="end_time" required>
+            
+            <label for="notes">Notlar (Opsiyonel):</label>
+            <textarea id="notes" name="notes" rows="4" placeholder="Örn: Bu seansta özellikle X konusuna odaklandım, Y zor geldi."></textarea>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Seansı Kaydet</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
