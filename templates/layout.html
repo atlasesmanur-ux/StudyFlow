@@ -5,28 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}StudyFlow{% endblock %}</title>
 
-    <!-- Tema: Sadece Mor ve Pembe vurgularla modern Dark Mode -->
     <style>
         /*==================================
-          DEĞİŞKENLER VE TEMEL SIFIRLAMA
+           DEĞİŞKENLER VE TEMA AYARLARI
         ==================================*/
+        
+        /* 1. VARSAYILAN (MEVCUT DARK MOD) */
         :root {
-            /* Renk Paleti */
-            --primary-violet: #8A2BE2;    /* Ana Vurgu (Mor) */
-            --secondary-fuchsia: #FF00FF; /* İkinci Vurgu (Pembe/Fuşya) */
-            --background-dark: #1A1A2E;   /* Koyu Lacivert/Gri Arka Plan */
-            --card-background: #2C2C40;   /* Kart Arka Planı */
-            --text-light: #F0F0F0;        /* Açık Metin */
-            --text-muted: #B0B0C4;        /* Soluk Metin */
-            --accent-glow: rgba(255, 0, 255, 0.4); /* Işıma Efekti */
+            --primary-violet: #8A2BE2;
+            --secondary-fuchsia: #FF00FF;
+            --background-dark: #1A1A2E;
+            --card-background: #2C2C40;
+            --text-light: #F0F0F0;
+            --text-muted: #B0B0C4;
+            --accent-glow: rgba(255, 0, 255, 0.4);
             --border-color: #4A4A6A;
             --success-green: #4CAF50;
+        }
+
+        /* 2. AYDINLIK MOD (LIGHT) */
+        [data-theme="light"] {
+            --primary-violet: #4338ca;       /* Koyu İndigo (Daha ciddi) */
+            --secondary-fuchsia: #e11d48;    /* Koyu Gül Rengi (Pembe yerine) */
+            --background-dark: #f3f4f6;      /* Açık Gri Zemin */
+            --card-background: #ffffff;      /* Beyaz Kart */
+            --text-light: #111827;           /* SİYAH (Beyaz zemin üstünde okunsun diye) */
+            --text-muted: #4b5563;           /* Koyu Gri */
+            --accent-glow: rgba(67, 56, 202, 0.15);
+            --border-color: #d1d5db;         /* İnce gri çizgi */
+            --success-green: #059669;
+            --chart-color-1: #4338ca;
+            --chart-color-2: #e11d48;
+        }
+
+        /* 3. OKYANUS MODU (OCEAN) */
+        [data-theme="ocean"] {
+            --primary-violet: #00695c;       /* Koyu Teal */
+            --secondary-fuchsia: #00acc1;    /* Cam Göbeği */
+            --background-dark: #e0f7fa;      /* Çok açık mavi zemin */
+            --card-background: #ffffff;      /* Beyaz Kart */
+            --text-light: #004d40;           /* KOYU YEŞİL (Okunabilirlik için) */
+            --text-muted: #546e7a;           /* Mavi Gri */
+            --accent-glow: rgba(0, 172, 193, 0.2);
+            --border-color: #b2ebf2;
+            --success-green: #00897b;
+            --chart-color-1: #00695c;
+            --chart-color-2: #00acc1;
+        }
+
+        /* Geçiş Efekti */
+        body, .card, h1, h2, h3, p, span, div {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            /* Geçişleri yumuşat */
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
         }
 
         body {
@@ -43,7 +80,7 @@
         }
 
         /*==================================
-          GENEL DÜZEN VE TİPOGRAFİ
+           GENEL DÜZEN VE TİPOGRAFİ
         ==================================*/
         .container {
             max-width: 1100px;
@@ -58,7 +95,7 @@
         }
 
         a {
-            color: var(--secondary-fuchsia); /* Varsayılan link rengi Pembe */
+            color: var(--secondary-fuchsia);
             text-decoration: none;
             transition: color 0.3s;
         }
@@ -68,13 +105,14 @@
         }
 
         /*==================================
-          HEADER / NAVİGASYON
+           HEADER / NAVİGASYON
         ==================================*/
         header {
             background-color: var(--card-background);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Gölgeyi hafiflettik */
             padding: 15px 0;
             margin-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
         }
 
         header .container {
@@ -83,12 +121,10 @@
             align-items: center;
         }
 
-        /* Logo Stili (İkonlu Metin) */
         .logo {
             color: var(--primary-violet);
             font-size: 1.5em;
             font-weight: 700;
-
             transition: transform 0.3s;
             display: flex;
             align-items: center;
@@ -130,7 +166,7 @@
         }
 
         /*==================================
-          BUTONLAR
+           BUTONLAR
         ==================================*/
         .btn {
             padding: 10px 18px;
@@ -140,11 +176,16 @@
             cursor: pointer;
             transition: all 0.3s ease;
             border: 2px solid transparent;
+            display: inline-block;
         }
 
         .btn-primary {
             background-color: var(--secondary-fuchsia);
-            color: var(--background-dark);
+            color: var(--background-dark); /* Yazı rengi arka planla kontrast olsun */
+        }
+        /* Light modda yazı okunmazsa diye özel ayar */
+        [data-theme="light"] .btn-primary, [data-theme="ocean"] .btn-primary {
+            color: #fff;
         }
 
         .btn-primary:hover {
@@ -162,6 +203,7 @@
             background-color: var(--secondary-fuchsia);
             color: var(--background-dark);
         }
+        [data-theme="light"] .btn-secondary:hover { color: #fff; }
 
         .btn-outline {
             background-color: transparent;
@@ -173,15 +215,16 @@
             background-color: var(--secondary-fuchsia);
             color: var(--background-dark);
         }
+        [data-theme="light"] .btn-outline:hover { color: #fff; }
 
         /*==================================
-          KARTLAR VE FORMLAR
+           KARTLAR VE FORMLAR
         ==================================*/
         .card {
             background-color: var(--card-background);
             padding: 25px;
             border-radius: 12px;
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Gölgeyi yumuşattık */
             transition: transform 0.3s;
             border: 1px solid var(--border-color);
         }
@@ -190,7 +233,6 @@
             transform: translateY(-3px);
         }
 
-        /* Formlar */
         .auth-form, .data-form {
             max-width: 500px;
             margin: 0 auto;
@@ -221,7 +263,6 @@
             outline: none;
         }
 
-        /* Form Grid Düzenlemesi (Seans Ekle) */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -232,13 +273,18 @@
             grid-column: 1 / 3;
         }
 
-        /* Datetime-local Input Düzeltmesi */
         input[type="datetime-local"] {
             letter-spacing: 0.5px;
         }
+        /* Light modda takvim ikonunu düzeltme */
         input[type="datetime-local"]::-webkit-calendar-picker-indicator {
             filter: invert(1); 
         }
+        [data-theme="light"] input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+        [data-theme="ocean"] input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            filter: invert(0); /* Koyu ikon */
+        }
+
 
         .form-actions {
             grid-column: 1 / 3;
@@ -247,7 +293,7 @@
         }
 
         /*==================================
-          DASHBOARD VE SEANS KARTLARI
+           DASHBOARD
         ==================================*/
         .dashboard-grid {
             display: grid;
@@ -282,7 +328,6 @@
             color: var(--secondary-fuchsia);
         }
 
-        /* Seans Listesi */
         .session-list {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -310,15 +355,6 @@
             color: var(--text-muted);
         }
 
-        .alert {
-            padding: 15px;
-            background-color: var(--card-background);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: var(--text-light);
-            text-align: center;
-        }
-        /* YENİ EKLENECEK FLASH MESAJ STİLLERİ */
         .flash-messages {
             margin-bottom: 25px;
         }
@@ -328,17 +364,496 @@
             border-radius: 8px; 
             margin-bottom: 10px;
             font-weight: 600;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .alert-theme-success {
-        background-color: var(--secondary-fuchsia); /* Pembe arka plan */
-        color: var(--background-dark); /* Koyu metin */
+            background-color: var(--secondary-fuchsia);
+            color: #fff;
         }
 
         .alert-theme-error {
-        background-color: var(--primary-violet); /* Mor arka plan */
-        color: var(--text-light); /* Açık metin */
+            background-color: var(--primary-violet);
+            color: #fff;
         }
+
+        /*==================================
+           POMODORO (Arka Plan Siyah - Yazı Temaya Uygun)
+        ==================================*/
+        .modal-fullscreen {
+            display: none;
+            position: fixed;
+            z-index: 9999; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            
+            /* KRİTİK KISIM: Arka plan her zaman SİYAH */
+            background-color: #000000 !important; 
+            
+            justify-content: center; 
+            align-items: center;    
+            flex-direction: column; 
+            transition: background-color 0.3s; 
+        }
+
+        .modal-content-pomodoro {
+            text-align: center;
+            padding: 0;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .exit-instruction,
+        .timer-label-text, 
+        #modal-title {
+            display: none !important; 
+        }
+
+        .pomodoro-options {
+            margin-top: 50px;
+        }
+
+        /* Butonlar da Siyah zeminde Tema Rengiyle parlasın */
+        .pomodoro-options button {
+            margin: 10px;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: transparent;
+            border-radius: 8px;
+            transition: all 0.2s;
+
+            /* Temanın vurgu rengini al */
+            border: 2px solid var(--secondary-fuchsia); 
+            color: var(--secondary-fuchsia);
+        }
+
+        .pomodoro-options button:hover {
+            /* Üzerine gelince buton dolsun */
+            background-color: var(--secondary-fuchsia);
+            color: #000000; /* Siyah yazı */
+            box-shadow: 0 0 15px var(--secondary-fuchsia); /* Hafif parlama */
+        }
+
+        #timer-display {
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .timer-time-text {
+            font-size: 20vw; 
+            line-height: 1em; 
+            font-weight: 700;
+            font-family:'Bebas Neue','Impact', sans-serif; 
+            margin: 0;
+            padding: 0;
+            letter-spacing: 5px; 
+
+            /* KRİTİK KISIM: Saat rengi temaya göre değişsin */
+            color: var(--secondary-fuchsia); 
+            
+            /* Yazının etrafına hafif bir neon parlama efekti (yine tema renginde) */
+            text-shadow: 0 0 20px var(--secondary-fuchsia);
+        }
+
+        #pause-resume-btn, 
+        #end-session-btn {
+            display: none !important;
+        }
+        /*==================================
+           KANBAN
+        ==================================*/
+        .kanban-container {
+            display: flex;
+            gap: 20px;
+            align-items: stretch; 
+            height: calc(100vh - 180px); 
+            padding-bottom: 20px;
+        }
+
+        .kanban-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--card-background); 
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .column-header {
+            margin-bottom: 15px;
+            min-height: 40px; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .column-header h3 {
+            color: var(--secondary-fuchsia);
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            width: 100%;
+        }
+
+        .kanban-cards {
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 5px; 
+            background-color: transparent; 
+            border: 2px dashed transparent; 
+            transition: all 0.3s;
+        }
+
+        .kanban-cards.drag-over {
+            background-color: var(--background-dark); 
+            border: 2px dashed var(--secondary-fuchsia);
+        }
+
+        .task-card {
+            background-color: var(--background-dark); 
+            color: var(--text-light);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            cursor: grab;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .task-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--secondary-fuchsia);
+        }
+
+        .task-card.dragging {
+            opacity: 0.5;
+            border: 1px dashed var(--text-muted);
+        }
+
+        /*==================================
+           PROJE YÖNETİM PANELİ
+        ==================================*/
+        .project-table {
+            width: 100%;
+            border-collapse: separate; 
+            border-spacing: 0 15px;    
+            color: var(--text-light);
+        }
+
+        .project-table th {
+            text-align: left;
+            padding: 0 20px 10px 20px; 
+            color: var(--secondary-fuchsia); 
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .project-table tbody tr {
+            background-color: var(--card-background);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .project-table tbody tr:hover {
+            transform: translateY(-2px);
+        }
+
+        .project-table td {
+            padding: 20px;
+            vertical-align: middle; 
+        }
+
+        .project-table td:first-child {
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+            border-left: 5px solid var(--success-green); 
+        }
+
+        .project-table td:last-child {
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        .badge-completed {
+            display: inline-flex;      
+            align-items: center;       
+            gap: 6px;                  
+            background-color: rgba(76, 175, 80, 0.15);
+            color: #4CAF50;
+            padding: 8px 16px;
+            border-radius: 30px;       
+            font-size: 0.85em;
+            font-weight: 600;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            white-space: nowrap;       
+        }
+
+        /*==================================
+           DASHBOARD HEADER
+        ==================================*/
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .welcome-area h1 {
+            margin: 0; 
+            color: var(--text-light); 
+            font-size: 1.8rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-action-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: transform 0.2s;
+            text-decoration: none; 
+        }
+
+        .btn-action-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-pomodoro {
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+        }
+
+        .btn-kanban {
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+        
+        .btn-kanban-text {
+            text-align: left;
+        }
+
+        .btn-add-quick {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            font-size: 1.5rem;
+            text-decoration: none;
+        }
+        
+        .btn-icon-large {
+            font-size: 1.4rem;
+        }
+
+        .btn-sub-text {
+            font-size: 0.7rem; 
+            opacity: 0.8; 
+            line-height: 1;
+            display: block;
+        }
+
+        .btn-main-text {
+            font-weight: bold;
+            display: block;
+        }
+
+        /* Rütbe Rozeti Renkleri (Bunlar sabit kalabilir) */
+        .rank-badge {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            border: 1px solid transparent;
+        }
+        .rank-legend {
+            background-color: rgba(212, 175, 55, 0.15);
+            color: #d4af37;
+            border-color: #d4af37;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+        .rank-master {
+            background-color: rgba(255, 215, 0, 0.15);
+            color: #FFD700;
+            border-color: #FFD700;
+        }
+        .rank-silver {
+            background-color: rgba(192, 192, 192, 0.15);
+            color: #C0C0C0;
+            border-color: #C0C0C0;
+        }
+        .rank-bronze {
+            background-color: rgba(205, 127, 50, 0.15);
+            color: #CD7F32;
+            border-color: #CD7F32;
+        }
+
+                /* TABLO YAZI RENGİ DÜZELTMESİ */
+        /* Tablonun içindeki tüm hücreleri, kalın yazıları ve linkleri tema rengine zorluyoruz */
+        .project-table td, 
+        .project-table td strong, 
+        .project-table td span, 
+        .project-table td a {
+            color: var(--text-light) !important; 
+        }
+
+        /* Okyanus veya Light modda başlıkların rengini netleştirme */
+        [data-theme="ocean"] .project-table th,
+        [data-theme="light"] .project-table th {
+            color: var(--secondary-fuchsia); /* Başlık rengini tema vurgusu yap */
+            font-weight: 800;
+        }
+
+        /* === PROFESYONEL TEMA SEÇİCİ TASARIMI === */
+
+/* 1. Dış Kapsayıcı (Hizalama için) */
+.theme-pill-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 15px; /* Çıkış yap butonundan uzaklaşsın */
+}
+
+/* 2. Hap Şeklindeki Kutu */
+.theme-pill {
+    display: flex;
+    align-items: center;
+    background-color: transparent; /* Arka plan şeffaf */
+    border: 1px solid var(--border-color); /* İnce bir çerçeve */
+    border-radius: 50px; /* Tam oval kenarlar */
+    padding: 4px;
+    gap: 4px; /* Butonlar arası boşluk */
+    transition: border-color 0.3s ease;
+}
+
+/* 3. Butonların Kendisi */
+.theme-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%; /* Yuvarlak buton */
+    border: none;
+    background: transparent;
+    color: var(--text-muted); /* Pasif ikon rengi */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    outline: none; /* Tıklayınca çıkan mavi çizgiyi kaldır */
+}
+
+/* Hover (Üzerine gelince) */
+.theme-btn:hover {
+    background-color: rgba(128, 128, 128, 0.1);
+    color: var(--secondary-fuchsia);
+}
+
+/* 4. AKTİF DURUM (Seçili olan buton) */
+.theme-btn.active {
+    background-color: var(--secondary-fuchsia); /* Senin pembe/mavi rengin */
+    color: #ffffff !important; /* İkon beyaz olsun */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Hafif gölge */
+    transform: scale(1.05); /* Hafif büyüsün */
+}
+
+/* Light modda kutunun daha belirgin olması için */
+[data-theme="light"] .theme-pill {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+/* === OTOMATİK PROGRESS BAR TASARIMI === */
+.progress-bar-container {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.progress-bar-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end; /* Alt hizada buluşsunlar */
+    margin-bottom: 10px;
+}
+
+.progress-percentage {
+    font-size: 2.5em; 
+    font-weight: 800;
+    color: var(--secondary-fuchsia); /* Tema rengi */
+    line-height: 1;
+    letter-spacing: -1px;
+}
+
+.progress-label {
+    font-size: 0.9em;
+    color: var(--text-muted);
+    padding-bottom: 5px; /* Yüzde yazısıyla hizalamak için */
+}
+
+/* Çubuğun Yolu (Boş Kısım) */
+.progress-bar-bg {
+    width: 100%;
+    height: 14px; 
+    background-color: rgba(0,0,0,0.1); /* Hafif koyu zemin */
+    border-radius: 10px; 
+    overflow: hidden; 
+    border: 1px solid var(--border-color);
+}
+
+/* Light modda çubuk yolu daha belirgin olsun */
+[data-theme="light"] .progress-bar-bg {
+    background-color: #e2e8f0;
+}
+
+/* Çubuğun Dolusu (Hareketli Kısım) */
+.progress-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    /* Tema renklerine göre geçişli renk */
+    background: linear-gradient(90deg, var(--primary-violet) 0%, var(--secondary-fuchsia) 100%);
+    transition: width 1s ease-out; /* Animasyonlu doluş */
+    box-shadow: 0 0 10px var(--accent-glow); /* Hafif parlama */
+}
+/* İlerleme Kartı Metin Düzeni */
+.progress-bar-container {
+    margin-top: 15px; /* Biraz daha yukarı alalım */
+}
+
+.progress-percentage {
+    /* Sayı fontunu biraz daha teknik yapalım */
+    font-variant-numeric: tabular-nums; 
+}
     </style>
 </head>
 <body>
@@ -346,14 +861,13 @@
         <div class="container">
             <a href="{{ url_for('index') }}" class="logo">
                 <img src="{{ url_for('static', filename='images/studyflow_logo.png.png') }}" 
-                    alt="StudyFlow Logo" 
-                    class="logo-image">
+                     alt="StudyFlow Logo" 
+                     class="logo-image">
                 <span class="logo-text">StudyFlow</span>
             </a>
             <nav>
                 <ul>
                     {% if session.get('user_id') %}
-                        <!-- Giriş yapmış kullanıcı menüsü -->
                         <li class="user-info">
                             Merhaba, <span class="username">{{ session.username.split(' ')[0] }}</span>!
                         </li>
@@ -362,10 +876,25 @@
                         <li><a href="{{ url_for('plan_week') }}" class="btn btn-secondary">Planla</a></li>
                         <li><a href="{{ url_for('logout') }}" class="btn btn-outline">Çıkış Yap</a></li>
                     {% else %}
-                        <!-- Giriş yapmamış kullanıcı menüsü -->
                         <li><a href="{{ url_for('login') }}" class="btn btn-primary">Giriş Yap</a></li>
                         <li><a href="{{ url_for('register') }}" class="btn btn-outline">Kayıt Ol</a></li>
                     {% endif %}
+
+                   <li class="theme-pill-container">
+    <div class="theme-pill">
+        <button onclick="setTheme('default')" id="btn-default" class="theme-btn" title="Karanlık Mod">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+
+        <button onclick="setTheme('light')" id="btn-light" class="theme-btn" title="Aydınlık Mod">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+
+        <button onclick="setTheme('ocean')" id="btn-ocean" class="theme-btn" title="Okyanus Mod">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20M2 12c0 5.523 4.477 10 10 10s10-4.477 10-10M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10"/></svg>
+        </button>
+    </div>
+</li>
                 </ul>
             </nav>
         </div>
@@ -377,11 +906,9 @@
             {% if messages %}
                 <div class="flash-messages">
                     {% for category, message in messages %}
-                        
                         <div class="alert-card alert-theme-{{ category }}">
                             {{ message }}
                         </div>
-                        
                     {% endfor %}
                 </div>
             {% endif %}
@@ -396,6 +923,89 @@
             <p>&copy; 2023 StudyFlow. Tüm Hakları Saklıdır.</p>
         </div>
     </footer>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
+    <script> var chart; </script>
+
+    {% block scripts %}
+    {% endblock scripts %}
+
+    <script>
+       // Tema Değiştirme Fonksiyonu
+    function setTheme(themeName) {
+        // 1. ÖNCEKİ SEÇİMİ TEMİZLE
+        // Tüm butonlardan 'active' sınıfını kaldır
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // 2. YENİ BUTONU İŞARETLE
+        const selectedBtn = document.getElementById('btn-' + themeName);
+        if (selectedBtn) {
+            selectedBtn.classList.add('active');
+        }
+
+        // 3. TEMAYI UYGULA (Senin eski kodların burası)
+        if (themeName === 'default') {
+            document.documentElement.removeAttribute('data-theme');
+            localStorage.removeItem('theme');
+            if(typeof updateChartColors === 'function') updateChartColors('#8A2BE2', '#FF00FF'); 
+        } else {
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('theme', themeName);
+
+            if (themeName === 'light') {
+                if(typeof updateChartColors === 'function') updateChartColors('#4338ca', '#e11d48');
+            } else if (themeName === 'ocean') {
+                if(typeof updateChartColors === 'function') updateChartColors('#00695c', '#00acc1');
+            }
+        }
+    }
+
+    // SAYFA YÜKLENDİĞİNDE DOĞRU BUTONU BOYAMAK İÇİN:
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedTheme = localStorage.getItem('theme') || 'default';
+        // Temayı yükle
+        if (savedTheme !== 'default') {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+        // İlgili butona 'active' sınıfını ekle
+        const btn = document.getElementById('btn-' + savedTheme);
+        if (btn) btn.classList.add('active');
+    });
+        // 2. Grafiğin Renklerini Güncelleyen Yardımcı Fonksiyon
+        function updateChartColors(color1, color2) {
+            // Eğer sayfada bir grafik varsa rengini değiştir
+            if (typeof chart !== 'undefined' && chart) {
+                // CSS'ten o anki yazı rengini ve kenarlık rengini al
+                var textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim();
+                var borderColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color').trim();
+
+                chart.updateOptions({
+                    colors: [color1, color2],
+                    chart: {
+                        foreColor: textColor // Grafik yazı rengini güncelle
+                    },
+                    grid: {
+                        borderColor: borderColor // Grafik ızgara rengini güncelle
+                    },
+                    xaxis: {
+                        labels: {
+                            style: { colors: textColor } // Alt yazıların rengini garantiye al
+                        }
+                    }
+                });
+            }
+        }
+
+        // 3. Sayfa Yüklendiğinde Kayıtlı Temayı Hatırla
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                setTheme(savedTheme);
+            }
+        })();
+    </script>
+    
 </body>
 </html>

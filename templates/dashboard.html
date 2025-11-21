@@ -1,71 +1,233 @@
 {% extends "layout.html" %}
 
-{% block title %}Çalışma Paneli - StudyFlow{% endblock %}
+{% block title %}Panelim - StudyFlow{% endblock %}
 
 {% block content %}
-    <h1 class="page-title">Çalışma Paneli</h1>
-    
-    <div class="dashboard-grid">
-        <div class="summary-card card">
-            <h2>Bu Hafta ({{ week_start_date.strftime('%d %B') }})</h2>
-            <p class="stat-main">{{ weekly_total_hours }}<span class="stat-sub">saat</span> {{ weekly_remaining_minutes }}<span class="stat-sub">dk</span></p>
-            <p class="stat-sub">Toplam Çalışma Süren</p>
-        </div>
+
+<div class="dashboard-header">
+
+    <div class="welcome-area">
+        <h1>
+            Merhaba, <span style="color: var(--secondary-fuchsia);">{{ session.username.split(' ')[0] }}</span>! 
+        </h1>
         
-        <div class="plan-status-card card">
-            {% if current_plan %}
-                <h3>{{ current_plan.week_start_date.strftime('%d %B') }} Haftası Planı</h3>
-                <p style="font-size: 0.95em; color: var(--text-muted);">{{ current_plan.goals | truncate(150) }}</p>
-                <div class="form-actions" style="margin-top: 20px;">
-                    <a href="{{ url_for('plan_week') }}" class="btn btn-outline">Planı Düzenle</a>
-                </div>
-            {% else %}
-                <h3>Planlanmamış Hafta!</h3>
-                <p style="font-size: 0.95em; color: var(--text-muted);">
-                    Gelecek hafta ({{ next_monday.strftime('%d %B') }} Pazartesi) için henüz bir hedefin yok.
-                </p>
-                <div class="form-actions" style="margin-top: 20px;">
-                    <a href="{{ url_for('plan_week') }}" class="btn btn-primary" style="background-color: var(--secondary-fuchsia); color: var(--background-dark);">Yeni Plan Oluştur</a>
-                </div>
+        <div style="margin-top: 10px;">
+            {% set badge_class = 'rank-bronze' %}
+            {% if 'Efsanesi' in user_rank %}{% set badge_class = 'rank-legend' %}
+            {% elif 'Usta' in user_rank %}{% set badge_class = 'rank-master' %}
+            {% elif 'Çalışkan' in user_rank %}{% set badge_class = 'rank-silver' %}
             {% endif %}
+            
+            <span class="rank-badge {{ badge_class }}" 
+                  style="background-color: {{ rank_color }}15; color: {{ rank_color }}; border: 1px solid {{ rank_color }}; padding: 6px 12px; border-radius: 15px; font-weight: bold; display: inline-flex; align-items: center; gap: 5px;">
+                {% if 'Efsanesi' in user_rank %}🏆
+                {% elif 'Usta' in user_rank %}🥇
+                {% elif 'Çalışkan' in user_rank %}🥈
+                {% else %}🥉
+                {% endif %}
+                {{ user_rank }}
+            </span>
         </div>
     </div>
 
-    <h2 class="page-title" style="font-size: 2em; margin-top: 60px;">Tüm Kayıtlı Seansların</h2>
-    
-    {% if sessions %}
-        <div class="session-list">
-            {% for session in sessions %} 
-                <div class="session-card card">
-                    <h2>{{ session.task_name }}</h2>
-                    <p><strong>Süre:</strong> {{ session.duration_minutes }} dakika</p>
-                    <p><strong>Başlangıç:</strong> {{ session.start_time.strftime('%Y-%m-%d %H:%M') if session.start_time else '(Tarih Eksik)' }}</p>
-                    <p><strong>Bitiş:</strong> {{ session.end_time.strftime('%Y-%m-%d %H:%M') if session.end_time else '(Tarih Eksik)' }}</p>
-                    
-                    {% if session.notes %}
-                        <p class="notes"><strong>Notlar:</strong> {{ session.notes }}</p>
-                    {% endif %}
-                    
-                    <div class="session-actions" style="margin-top: 20px; text-align: right;">
-                        
-                        <a href="{{ url_for('edit_session', session_id=session.id) }}" class="btn btn-outline" style="margin-right: 10px;">
-                            Düzenle
-                        </a>
-                        
-                        <form method="POST" action="{{ url_for('delete_session', session_id=session.id) }}" style="display: inline;">
-                            <button type="submit" class="btn btn-primary" onclick="return confirm('Bu seansı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!');">
-                                Sil
-                            </button>
-                        </form>
-                    </div>
-                    </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="alert alert-info card">
-            <p style="font-size: 1.1em;">Henüz hiç çalışma seansı kaydetmemişsin. Hemen <a href="{{ url_for('add_session') }}">bir seans ekle</a>!</p>
-            <img src="https://via.placeholder.com/100x100?text=✨" alt="Motivasyon İkonu" style="margin-top: 15px; border-radius: 8px;">
-        </div>
-    {% endif %}
+   <div class="action-buttons">
+        
+        <a href="{{ url_for('pomodoro_page') }}" class="btn-action-card btn-pomodoro">
+            <span class="btn-icon-large">⏱️</span> 
+            <div class="btn-kanban-text">
+                <span class="btn-sub-text" style="color: var(--text-muted);">Odaklan</span>
+                <span class="btn-main-text">Pomodoro</span>
+            </div>
+        </a>
 
-{% endblock %}
+        <a href="{{ url_for('kanban_board') }}" class="btn btn-primary btn-action-card btn-kanban">
+            <span class="btn-icon-large">📅</span>
+            <div class="btn-kanban-text">
+                <span class="btn-sub-text">Kanban</span>
+                <span class="btn-main-text">Panosu</span>
+            </div>
+        </a>
+
+        <a href="{{ url_for('add_session') }}" class="btn btn-secondary btn-add-quick" title="Manuel Seans Ekle">
+            +
+        </a>
+
+    </div>
+</div>
+
+<div style="margin-bottom: 30px;">
+    <div class="card">
+        <h3 style="font-size: 1.3em; color: white; margin-bottom: 20px;">Ders Süreleri Takibi (Toplam Harcanan Süre)</h3>
+        <div id="chart"></div>
+    </div>
+</div>
+
+<div class="dashboard-grid" style="margin-bottom: 40px;">
+    <div class="card summary-card">
+        <h2>Bu Haftaki Çalışman</h2>
+        <div class="stat-main">
+            {{ weekly_total_hours }}<span class="stat-sub">sa</span> 
+            {{ weekly_remaining_minutes }}<span class="stat-sub">dk</span>
+        </div>
+        <div style="background-color: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; margin-top: 10px; overflow: hidden;">
+            <div style="width: {{ progress_percentage }}%; background-color: var(--success-green); height: 100%;"></div>
+        </div>
+        <p style="font-size: 0.8em; color: var(--text-muted); margin-top: 5px;">Hedefin: {{ default_goal_hours }} saat (%{{ progress_percentage }})</p>
+    </div>
+
+    <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h3 style="margin:0;">Proje İlerleme Durumu</h3>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+    </div>
+    
+    <div class="progress-bar-container">
+        <div class="progress-bar-text">
+            <span class="progress-percentage">%{{ progress_percentage }}</span> 
+            
+            <span class="progress-label">
+                <strong style="color:var(--text-light)">{{ completed_tasks }}</strong> / {{ total_tasks }} Görev
+            </span> 
+        </div>
+
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: {{ progress_percentage }}%;"></div> 
+        </div>
+    </div>
+
+    <div style="margin-top: 15px; font-size: 0.9em; color: var(--text-muted); display:flex; align-items:center; gap:8px;">
+        
+        {% if progress_percentage == 100 %}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span style="color:var(--success-green); font-weight:600;">Tüm görevler başarıyla tamamlandı.</span>
+        
+        {% elif progress_percentage >= 50 %}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--secondary-fuchsia)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span>Süreç %50 seviyesini geçti, devam ediliyor.</span>
+        
+        {% elif progress_percentage > 0 %}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>Aktif görevler üzerinde çalışılıyor.</span>
+        
+        {% else %}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+            <span>Henüz tamamlanmış bir görev bulunmuyor.</span>
+        {% endif %}
+    </div>
+</div>
+</div>
+
+{% if active_plans %}
+<div style="margin-bottom: 30px;">
+    <h3 style="color: var(--text-muted); margin-bottom: 15px;">Haftalık Hedeflerin</h3>
+    
+    {% for plan in active_plans %}
+    <div class="card plan-status-card" style="margin-bottom: 15px;">
+        <h4 style="font-size: 1rem; color: var(--secondary-fuchsia);">📅 Hedef #{{ loop.index }}</h4>
+        
+        <p style="font-size: 1.1em; margin-top: 10px; white-space: pre-line;">{{ plan.goals }}</p>
+        
+        <div style="margin-top: 10px; font-size: 0.85em; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.05); padding-top: 5px;">
+            Plan Bitiş: {{ next_monday.strftime('%d.%m.%Y') }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<h2 style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px;">Son Çalışmaların</h2>
+<div class="session-list">
+    {% for session in sessions %}
+    <div class="card session-card">
+        <h2>{{ session.task_name }}</h2>
+        <p><strong>Tarih:</strong> {{ session.start_time.strftime('%d.%m.%Y') }}</p>
+        <p><strong>Süre:</strong> {{ session.duration_minutes }} dk</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+            <span style="font-size: 0.85em; color: var(--text-muted);">
+                {{ session.start_time.strftime('%H:%M') }} - {{ session.end_time.strftime('%H:%M') }}
+            </span>
+            <a href="{{ url_for('edit_session', session_id=session.id) }}" class="btn btn-sm btn-outline" style="font-size: 0.8em; padding: 5px 10px;">Düzenle</a>
+        </div>
+        {% if session.notes %}
+        <div class="notes">{{ session.notes }}</div>
+        {% endif %}
+    </div>
+    {% else %}
+    <p style="color: var(--text-muted);">Henüz kayıtlı çalışma seansı yok. Hemen bir tane ekle!</p>
+    {% endfor %}
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+<div id="dashboard-data" 
+     data-grafik='{{ grafik_datasi | tojson | safe }}'
+     style="display: none;">
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    // 2. VERİLERİ GÜVENLİCE ÇEK
+    var dataStore = document.getElementById('dashboard-data');
+    var rawData = JSON.parse(dataStore.dataset.grafik); // Veriyi buradan alıyoruz
+
+    // 3. GRAFİĞİ ÇİZDİR (Senin istediğin Mor Sütun Grafiği)
+    if (rawData.length > 0) {
+        var labels = rawData.map(item => item.kategori);
+        var series = rawData.map(item => item.süre);
+
+        var options = {
+            series: [{
+                name: 'Süre',
+                data: series
+            }],
+            chart: {
+                type: 'bar', 
+                height: 350,
+                background: 'transparent',
+                toolbar: { show: false }
+            },
+            // Senin Mor Renklerin
+            colors: ['#7B1FA2', '#9C27B0', '#BA68C8', '#8A2BE2', '#FF00FF'],
+            plotOptions: {
+                bar: {
+                    distributed: true, 
+                    borderRadius: 4,
+                    columnWidth: '45%', 
+                }
+            },
+            dataLabels: { enabled: false },
+            legend: { show: false },
+            xaxis: {
+                categories: labels,
+                labels: {
+                    style: { colors: '#B0B0C4', fontSize: '12px' }
+                },
+                axisBorder: { show: false },
+                axisTicks: { show: false }
+            },
+            yaxis: {
+                labels: {
+                    style: { colors: '#B0B0C4' },
+                    formatter: function (val) { return val + " dk"; }
+                },
+                grid: { borderColor: '#444' }
+            },
+            grid: {
+                borderColor: '#444', 
+                strokeDashArray: 0, 
+                yaxis: { lines: { show: true } }
+            },
+            theme: { mode: 'dark' }
+        };
+
+        chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+    } else {
+        document.querySelector("#chart").innerHTML = "<p style='text-align:center; padding:20px; color:#888;'>Henüz veri yok.</p>";
+    }
+</script>
+{% endblock scripts %}

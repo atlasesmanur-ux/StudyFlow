@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+
+{% block title %}Proje Yönetim Paneli - StudyFlow{% endblock %}
+
+{% block content %}
+
+<div class="container" style="max-width: 1100px;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px;">
+        <div>
+            <h2 style="color: var(--secondary-fuchsia); margin-bottom: 5px;">🚀 Proje Yönetim Paneli</h2>
+            <p style="color: var(--text-muted);">Son 14 gün içinde tamamladığın görevler burada listelenir.</p>
+        </div>
+        <a href="{{ url_for('kanban_board') }}" class="btn btn-outline">
+            ← Panoya Dön
+        </a>
+    </div>
+
+    <div class="card" style="background-color: var(--card-background); border: none;">
+        {% if tasks %}
+            <div style="overflow-x: auto;">
+                <table class="project-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">GÖREV</th>
+                            <th style="width: 40%;">AÇIKLAMA</th>
+                            <th style="width: 15%;">BİTİŞ ZAMANI</th>
+                            <th style="width: 15%;">DURUM</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                        <tr>
+                            <td style="font-weight: bold; color: white; font-size: 1.1em;">
+                                {{ task.title }}
+                            </td>
+                            
+                            <td style="color: var(--text-muted);">
+                                {{ task.description }}
+                            </td>
+                            
+                            <td>
+                                <div style="display: flex; flex-direction: column;">
+                                    <span style="font-weight: bold; color: var(--text-light);">{{ task.completed_at.strftime('%d.%m.%Y') }}</span>
+                                    <span style="color: var(--text-muted); font-size: 0.85em;">{{ task.completed_at.strftime('%H:%M') }}</span>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="badge-completed">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Tamamlandı
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 60px; color: var(--text-muted);">
+                <div style="font-size: 4em; margin-bottom: 20px; opacity: 0.5;">📭</div>
+                <h3 style="color: var(--text-light);">Henüz tamamlanmış görev yok.</h3>
+                <p>Son 14 gün içinde biten görevlerin burada listelenecek.</p>
+                <br>
+                <a href="{{ url_for('kanban_board') }}" class="btn btn-primary">Kanban'a Git</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}

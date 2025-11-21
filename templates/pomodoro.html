@@ -1,0 +1,193 @@
+{% extends "layout.html" %}
+
+{% block title %}Pomodoro Odaklanma Tekniği - StudyFlow{% endblock %}
+
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+
+{% block content %}
+    <div class="page-header">
+        <h1>🍅 Pomodoro Odaklanma Tekniği</h1>
+    </div>
+
+    <div class="pomodoro-info-section card">
+        <h2>Pomodoro Nedir ve Faydaları Nelerdir?</h2>
+        <p>Pomodoro tekniği, odaklanmayı artırmak ve zihinsel yorgunluğu azaltmak için süreyi kısa aralıklarla (genellikle 25 dakika çalışma, 5 dakika mola) bölerek çalışmayı teşvik eden zaman yönetimi yöntemidir.</p>
+        
+        <p><strong>Temel Faydaları:</strong></p>
+        <ul>
+            <li>✨ Odaklanmayı Artırır: Kısa çalışma aralıkları, dikkatin dağılmasını zorlaştırır.</li>
+            <li>⏳ Ertelemeyi Azaltır: Başlaması gereken işi sadece 25 dakikalık bir taahhüde indirir.</li>
+            <li>🧠 Zihinsel Dayanıklılık: Düzenli molalar sayesinde uzun süre verimli kalmanızı sağlar.</li>
+        </ul>
+    </div>
+    <br>
+
+    <div class="pomodoro-how-to-section card">
+        <h2>Pomodoro Tekniği Nasıl Uygulanır?</h2>
+        <ol>
+            <li>Görevi Seçin: Başlayacağınız dersi veya konuyu belirleyin.</li>
+            <li>Süreyi Ayarlayın: Sayaçta çalışma süresini başlatın.</li>
+            <li>Çalışın: Sayaç çalana kadar dikkatiniz dağılmadan sadece o göreve odaklanın.</li>
+            <li>Kısa Mola Verin: Sayaç çaldığında (genellikle 5 dakika), masadan kalkın ve dinlenin.</li>
+            <li>Uzun Mola: 4 Pomodoro döngüsünden sonra (yaklaşık 2 saat), 15-30 dakikalık uzun bir mola verin.</li>
+        </ol>
+    </div>
+
+    <hr>
+
+    <div class="start-session-area" style="text-align: center; margin-top: 40px;">
+        <h2>Hemen Bir Pomodoro Oturumu Başlatın!</h2>
+        <button id="start-pomodoro-btn" class="btn btn-primary btn-large" 
+                style="background-color: var(--secondary-fuchsia); font-size: 1.5em; padding: 15px 40px;">
+            Sayacı Başlat 🚀
+        </button>
+    </div>
+
+    <div id="pomodoro-modal" class="modal-fullscreen" style="display: none;">
+        <div class="modal-content-pomodoro">
+            <h2 id="modal-title">Pomodoro Oturumu Seçin</h2>
+            
+            <div class="pomodoro-options">
+                <button class="time-option" data-work="25" data-break="5">25 Dk Çalışma / 5 Dk Mola</button>
+                <button class="time-option" data-work="40" data-break="10">40 Dk Çalışma / 10 Dk Mola</button>
+                <button class="time-option" data-work="60" data-break="15">60 Dk Çalışma / 15 Dk Mola</button>
+            </div>
+
+            <div id="timer-display" style="display: none;">
+                <p id="timer-label" class="timer-label-text"></p>
+                <div id="timer-time" class="timer-time-text">25:00</div>
+            </div>
+
+            <p class="exit-instruction">Çıkış için ESC tuşuna basın</p>
+        </div>
+    </div>
+
+{% endblock content %} 
+
+{% block scripts %} 
+<script>
+    // DOM Elementleri
+    const startPomodoroBtn = document.getElementById('start-pomodoro-btn');
+    const pomodoroModal = document.getElementById('pomodoro-modal');
+    const timeOptions = document.querySelectorAll('.time-option');
+    const timerDisplay = document.getElementById('timer-display');
+    const timerTime = document.getElementById('timer-time');
+
+    let isRunning = false;
+    let isWorkTime = true;
+    let timerInterval;
+    let remainingTime; 
+    let workDuration = 25 * 60; 
+    let breakDuration = 5 * 60; 
+
+    // --- Tam Ekran API Fonksiyonları ---
+
+    function toggleFullscreen(element) {
+        if (element.requestFullscreen) {
+            element.requestFullscreen();
+        } else if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+        } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+        }
+    }
+
+    function exitFullscreen() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    }
+
+    // --- Yardımcı Fonksiyonlar ---
+
+    function formatTime(totalSeconds) {
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function updateTimerDisplay() {
+        timerTime.textContent = formatTime(remainingTime);
+        document.title = `${formatTime(remainingTime)} - ${isWorkTime ? "ÇALIŞMA" : "MOLA"}`;
+    }
+
+    function startTimer() {
+        if (!isRunning) {
+            isRunning = true;
+            
+            timerInterval = setInterval(() => {
+                remainingTime--;
+                updateTimerDisplay();
+
+                if (remainingTime <= 0) {
+                    clearInterval(timerInterval);
+                    
+                    alert(isWorkTime ? "Çalışma Süresi Bitti! Mola Başlıyor." : "Mola Bitti! Çalışmaya Dön.");
+                    
+                    isWorkTime = !isWorkTime; 
+                    remainingTime = isWorkTime ? workDuration : breakDuration;
+                    
+                    // Yeni zaman dilimini otomatik başlat
+                    startTimer(); 
+                }
+            }, 1000);
+        }
+    }
+
+    function pauseTimer() {
+        if (isRunning) {
+            clearInterval(timerInterval);
+            isRunning = false;
+        }
+    }
+
+    // Modal sıfırlama ve tam ekrandan çıkış
+    function resetModal() {
+        pauseTimer();
+        pomodoroModal.style.display = 'none'; 
+        exitFullscreen(); 
+        document.title = 'Pomodoro Odaklanma Tekniği - StudyFlow'; 
+        window.location.reload(); 
+    }
+
+    // 1. "Sayacı Başlat" butonu: Modal'ı açar ve seçenekleri gösterir.
+    startPomodoroBtn.addEventListener('click', () => {
+        pomodoroModal.style.display = 'flex';
+        timerDisplay.style.display = 'none';
+        
+        document.querySelector('.pomodoro-options').style.display = 'block';
+    });
+
+
+    // 2. Süre Seçeneklerini Dinle: Süre seçildiğinde tam ekranı açar ve sayacı başlatır.
+    timeOptions.forEach(button => {
+        button.addEventListener('click', (e) => {
+            workDuration = parseInt(e.target.dataset.work) * 60;
+            breakDuration = parseInt(e.target.dataset.break) * 60;
+            remainingTime = workDuration;
+            isWorkTime = true;
+            updateTimerDisplay();
+            document.querySelector('.pomodoro-options').style.display = 'none';
+            timerDisplay.style.display = 'flex'; 
+            toggleFullscreen(pomodoroModal); 
+            startTimer();
+        });
+    });
+
+    // 3. Tarayıcıda ESC'ye basıldığında tam ekrandan çıkış
+    document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement) {
+            resetModal(); 
+        }
+    });
+
+</script>
+{% endblock scripts %}
