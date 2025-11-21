@@ -13,7 +13,7 @@ Bu proje **Python** ve **Flask** altyapısı kullanılarak geliştirilmiştir. V
 Projeyi kendi bilgisayarınızda çalıştırmak için aşağıdaki adımları izleyebilirsiniz:
 
 1.  **Projeyi indirin:**
-    `git clone https://github.com/kullaniciadi/studyflow.git`
+    `git clone https://github.com/atlasesmanur-ux/studyflow.git`
 2.  **Gerekli kütüphaneleri yükleyin:**
     `pip install -r requirements.txt`
 3.  **Veritabanı ayarlarını yapın:**
